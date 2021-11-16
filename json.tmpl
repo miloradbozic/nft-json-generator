@@ -1,29 +1,15 @@
 {
-{{$n := len .Creators}}{{range  $i, $e := .Creators}}{{if $i}}, {{end}}{{if eq (plus1 $i) $n}} {{end}}{{$e}}{{end}}
-    
     "name": "{{.Name}}",
     "symbol": "",
     "description": "Netherworld Tales NFT Collection Vol 1 - {{.Name}}",
     "seller_fee_basis_points": 500,
     "image": "image.png",
-    "attributes": [
+    "attributes": [{{$n := len .Traits}}{{range  $i, $e := .Traits}}{{if $i}}, {{end}}
       {
-        "trait_type": "Shape",
-        "value": "{{.Shape}}"
-      },
-      {
-        "trait_type": "Top Light",
-        "value": "{{.TopLight}}"
-      },
-      {
-        "trait_type": "Mid Light",
-        "value": "{{.MidLight}}"
-      },
-      {
-        "trait_type": "Rarity",
-        "value": "{{.Rarity}}"
-      }
-    ],
+      "trait_type": "{{$e.Name}}",
+      "value": "{{$e.Value}}"
+      }{{end}}
+      ],
     "collection": {
        "name": "Netherworld Tales NFT Collection Vol 1",
        "family": "NetherworldTales"

@@ -9,11 +9,13 @@ import (
 
 type Nft struct {
 	Name     string
-	Shape    string
-	TopLight string
-	MidLight string
-	Rarity   string
+	Traits   []Trait
 	Creators []string
+}
+
+type Trait struct {
+	Name  string
+	Value string
 }
 
 var fns = template.FuncMap{
@@ -33,13 +35,21 @@ func main() {
 
 	list := string(data)
 	lines := strings.Split(list, "\r\n")
+	traitNames := getTraitNames(lines[0])
 	for i, line := range lines {
-		attribs := strings.Split(line, ",")
-		nft := Nft{Name: fmt.Sprintf("Nft %d", i), Shape: attribs[0], TopLight: attribs[1], MidLight: attribs[2], Rarity: attribs[3]}
-		nft.Creators = append(nft.Creators, creators...)
+		traitValues := strings.Split(line, ",")
+		var traits []Trait
+		for i, traitName := range traitNames {
+			traits = append(traits, Trait{traitName, traitValues[i]})
+		}
+		nft := Nft{Name: fmt.Sprintf("Nft %d", i), Traits: traits, Creators: creators}
 		generateFile(i, nft)
 	}
 
+}
+
+func getTraitNames(header string) []string {
+	return strings.Split(header, ",")
 }
 
 func generateFile(i int, nft Nft) {
