@@ -20,6 +20,18 @@ This text you see here is *actually- written in Markdown! To get a feel
 for Markdown's syntax, type some text into the left window and
 watch the results in the right.
 
+## CSV Format
+
+Input file for the generator is a comma separated csv file which should have trait names as the first column. Example of input csv file:
+
+| Color | Age | Rarity |
+| ------ | ------ | ------ |
+| Red | Young | Common |
+| Blue | Young | Common |
+| Golden | Young | Medium |
+| Cameleon | Old | Rare |
+
+
 ## Installation
 
 Dillinger requires [Go](https://golang.org/) v? to run.
@@ -39,18 +51,6 @@ Want to contribute? Great!
 ## Docker
 
 Nft-Json-Generator is very easy to install and deploy in a Docker container.
-
-```sh
-cd dillinger
-docker build -t <youruser>/dillinger:${package.json.version} .
-```
-This will create the nft-json image and pull in the necessary dependencies.
-Be sure to swap out `${package.json.version}` with the actual
-version of Dillinger.
-
-Once done, run the Docker image and map the port to whatever you wish on
-your host. In this example, we simply map port 8000 of the host to
-port 8080 of the Docker (or whatever port was exposed in the Dockerfile):
 
 ```sh
 docker run -d -p 8000:8080 --restart=always --cap-add=SYS_ADMIN --name=dillinger <youruser>/dillinger:${package.json.version}
