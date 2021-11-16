@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -33,6 +34,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	if err := ensureDir("./output"); err != nil {
+		fmt.Println("Directory creation failed with error: " + err.Error())
+		os.Exit(1)
+	}
+
 	list := string(data)
 	lines := strings.Split(list, "\r\n")
 	traitNames := getTraitNames(lines[0])
@@ -43,6 +49,7 @@ func main() {
 			traits = append(traits, Trait{traitName, traitValues[i]})
 		}
 		nft := Nft{Name: fmt.Sprintf("Nft %d", i), Traits: traits, Creators: creators}
+
 		generateFile(i, nft)
 	}
 
@@ -67,4 +74,22 @@ func generateFile(i int, nft Nft) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func ensureDir(dirName string) error {
+	err := os.Mkdir(dirName, os.ModeDir)
+	if err == nil {
+		return nil
+	}
+	if os.IsExist(err) {
+		info, err := os.Stat(dirName)
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			return errors.New("path exists but is not a directory")
+		}
+		return nil
+	}
+	return err
 }
