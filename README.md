@@ -28,7 +28,7 @@ Install the dependencies and devDependencies and start the server.
 
 ```sh
 cd nft-json-generator
-go run main.go <wallet1> <wallet2> ...
+go run main.go <path_to_csv> <wallet1> <wallet2> ...
 ```
 
 ## Development

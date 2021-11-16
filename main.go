@@ -26,11 +26,11 @@ var fns = template.FuncMap{
 }
 
 func main() {
-	creators := os.Args[1:]
+	creators := os.Args[2:]
 
-	data, err := os.ReadFile("list.csv")
+	data, err := os.ReadFile(os.Args[1])
 	if err != nil {
-		fmt.Printf("error %v", err)
+		fmt.Printf("error reading input .csv file: %v", err)
 		os.Exit(1)
 	}
 
