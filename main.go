@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 	"text/template"
 )
 
@@ -26,6 +27,8 @@ var fns = template.FuncMap{
 }
 
 func main() {
+	var wg sync.WaitGroup
+
 	creators := os.Args[2:]
 
 	data, err := os.ReadFile(os.Args[1])
@@ -42,7 +45,7 @@ func main() {
 	list := string(data)
 	lines := strings.Split(list, "\r\n")
 	traitNames := getTraitNames(lines[0])
-	for i, line := range lines {
+	for i, line := range lines[1:] {
 		traitValues := strings.Split(line, ",")
 		var traits []Trait
 		for i, traitName := range traitNames {
@@ -50,9 +53,16 @@ func main() {
 		}
 		nft := Nft{Name: fmt.Sprintf("Nft %d", i), Traits: traits, Creators: creators}
 
-		generateFile(i, nft)
+		wg.Add(1)
+
+		go func(i int) {
+			defer wg.Done()
+			generateFile(i, nft)
+		}(i)
+
 	}
 
+	wg.Wait()
 }
 
 func getTraitNames(header string) []string {
@@ -60,6 +70,7 @@ func getTraitNames(header string) []string {
 }
 
 func generateFile(i int, nft Nft) {
+	fmt.Println("Generate ", i, "starting")
 	paths := []string{
 		"json.tmpl",
 	}
@@ -74,6 +85,7 @@ func generateFile(i int, nft Nft) {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("Generate ", i, "done")
 }
 
 func ensureDir(dirName string) error {
