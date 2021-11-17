@@ -27,22 +27,24 @@ var fns = template.FuncMap{
 }
 
 func main() {
-	var wg sync.WaitGroup
-
-	creators := os.Args[2:]
-
-	data, err := os.ReadFile(os.Args[1])
+	list, err := os.ReadFile(os.Args[1])
 	if err != nil {
 		fmt.Printf("error reading input .csv file: %v", err)
 		os.Exit(1)
 	}
+
+	creators := os.Args[2:]
+	generateNftJsons(string(list), creators, true)
+}
+
+func generateNftJsons(list string, creators []string, paralelize bool) {
+	var wg sync.WaitGroup
 
 	if err := ensureDir("./output"); err != nil {
 		fmt.Println("Directory creation failed with error: " + err.Error())
 		os.Exit(1)
 	}
 
-	list := string(data)
 	lines := strings.Split(list, "\r\n")
 	traitNames := getTraitNames(lines[0])
 	for i, line := range lines[1:] {
@@ -53,13 +55,15 @@ func main() {
 		}
 		nft := Nft{Name: fmt.Sprintf("Nft %d", i), Traits: traits, Creators: creators}
 
-		wg.Add(1)
-
-		go func(i int) {
-			defer wg.Done()
-			generateFile(i, nft)
-		}(i)
-
+		if paralelize {
+			wg.Add(1)
+			go func(i int) {
+				defer wg.Done()
+				generateJson(i, nft)
+			}(i)
+		} else {
+			generateJson(i, nft)
+		}
 	}
 
 	wg.Wait()
@@ -69,8 +73,7 @@ func getTraitNames(header string) []string {
 	return strings.Split(header, ",")
 }
 
-func generateFile(i int, nft Nft) {
-	fmt.Println("Generate ", i, "starting")
+func generateJson(i int, nft Nft) {
 	paths := []string{
 		"json.tmpl",
 	}
@@ -85,7 +88,6 @@ func generateFile(i int, nft Nft) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Generate ", i, "done")
 }
 
 func ensureDir(dirName string) error {
