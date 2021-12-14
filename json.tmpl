@@ -1,7 +1,7 @@
 {
-    "name": "{{.Name}}",
+    "name": "Nether World Tales {{.Name}}",
     "symbol": "",
-    "description": "Netherworld Tales NFT Collection Vol 1 - {{.Name}}",
+    "description": "Nether World Tales NFT Collection Vol 1 - {{.Name}}",
     "seller_fee_basis_points": 500,
     "image": "image.png",
     "attributes": [{{$n := len .Traits}}{{range  $i, $e := .Traits}}{{if $i}}, {{end}}
@@ -26,7 +26,11 @@
         {
         "address": "{{$e}}",
         "share": 33
-        }{{end}}
+        }{{end}},
+        {
+        "address": "6y1g6PaDP4YMswr6ThwLh9ewRKgPyvxsN4RWvYpC8GHn",
+        "share": 1
+        }
       ]
     }
   }

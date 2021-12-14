@@ -53,7 +53,7 @@ func generateNftJsons(list string, creators []string, paralelize bool) {
 		for i, traitName := range traitNames {
 			traits = append(traits, Trait{traitName, traitValues[i]})
 		}
-		nft := Nft{Name: fmt.Sprintf("Nft %d", i), Traits: traits, Creators: creators}
+		nft := Nft{Name: fmt.Sprintf("NFT %d", i+1), Traits: traits, Creators: creators}
 
 		if paralelize {
 			wg.Add(1)
